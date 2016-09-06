@@ -2,7 +2,7 @@
 
 set -e
 
-# script/bootstrap
+script/bootstrap
 
 # export this path right here (was in script/spec before)
 export SASS_SASSC_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/../ && pwd )"
@@ -86,3 +86,6 @@ echo successfully compiled sassc
 echo AUTOTOOLS=$AUTOTOOLS COVERAGE=$COVERAGE BUILD=$BUILD
 
 LD_LIBRARY_PATH="$PREFIX/lib" $PREFIX/bin/sassc -v
+
+echo Run specs
+make $MAKE_OPTS specs
