@@ -6,10 +6,10 @@ compiler:
   - clang
 
 env:
-  - AUTOTOOLS=no BUILD=shared
-  - AUTOTOOLS=no BUILD=static
-  - AUTOTOOLS=yes BUILD=shared
-  - AUTOTOOLS=yes BUILD=static
+  - AUTOTOOLS=yes
+  - AUTOTOOLS=no
+  - BUILD=shared
+  - BUILD=static
 
 before_install:
   - gem install sass
