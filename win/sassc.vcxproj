@@ -3,16 +3,13 @@
   <PropertyGroup>
     <SASSC_VERSION>[NA]</SASSC_VERSION>
     <LIBSASS_VERSION>[NA]</LIBSASS_VERSION>
-    <LIBSASS_DIR>..\..\libsass</LIBSASS_DIR>
-    <LIBSASS_SRC_DIR>$(LIBSASS_DIR)\src</LIBSASS_SRC_DIR>
-    <LIBSASS_HEADERS_DIR>$(LIBSASS_DIR)\src</LIBSASS_HEADERS_DIR>
-    <LIBSASS_INCLUDES_DIR>$(LIBSASS_DIR)\include</LIBSASS_INCLUDES_DIR>
+    <SASS_LIBSASS_PATH Condition="'$(SASS_LIBSASS_PATH)'==''">..\..\libsass</SASS_LIBSASS_PATH>
   </PropertyGroup>
   <Target Name="GitVersion">
     <Exec Command="git -C .. describe --abbrev=4 --dirty --always --tags" LogStandardErrorAsError="true" ContinueOnError="true" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="SASSC_VERSION" />
     </Exec>
-    <Exec Command="git -C $(LIBSASS_DIR) describe --abbrev=4 --dirty --always --tags" LogStandardErrorAsError="true" ContinueOnError="true" ConsoleToMSBuild="true">
+    <Exec Command="git -C $(SASS_LIBSASS_PATH) describe --abbrev=4 --dirty --always --tags" LogStandardErrorAsError="true" ContinueOnError="true" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="LIBSASS_VERSION" />
     </Exec>
   </Target>
@@ -98,6 +95,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32' Or '$(Configuration)|$(Platform)' == 'Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>..;posix;$(LIBSASS_INCLUDES_DIR);$(LIBSASS_HEADERS_DIR);$(LIBSASS_INCLUDES_DIR)\sass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -105,6 +105,12 @@
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
       <XMLDocumentationFileName>$(IntDir)/%(RelativeDir)/</XMLDocumentationFileName>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)..\script\bootstrap.cmd"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Set and print the environmental variables we care about</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -166,7 +172,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <Import Project="$(LIBSASS_DIR)\win\libsass.targets" />
+  <Import Project="$(SASS_LIBSASS_PATH)\win\libsass.targets" />
   <ItemGroup>
     <ClCompile Include="posix\getopt.c" />
     <ClCompile Include="..\sassc.c" />
